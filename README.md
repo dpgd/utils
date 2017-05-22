@@ -1,7 +1,9 @@
 # Common libraries for TOP project
 
 ## Usage
-Clone this repo with: `git submodule add git@10.25.253.3:TOP/utils.git`
+cd your-project-that-uses-utils-lib
+git submodule init 
+git submodule update
 
 ## API
 
