@@ -15,9 +15,9 @@ class Api():
 
         call = getattr(requests, method.lower())
 
-        path_con_barra = path if path.endswith('/') else path + '/'
+        with_slashes = path if path.endswith('/') else path + '/'
 
-        return call(self.__url + path_con_barra, **params)
+        return call(self.__url + with_slashes, **params)
 
     def get(self, path='', data=None, **kwargs):
         return self.__call(path, 'GET', data, **kwargs)
