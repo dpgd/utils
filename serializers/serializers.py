@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 from django.views.generic import ListView
 from django.middleware.csrf import rotate_token
+from django.db.models.query import QuerySet
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from django.conf import settings
@@ -24,13 +25,9 @@ class JSONResponseMixin(ListView, APIView):
 
     def send_response(self, response):
         response = json.dumps(response, indent=4, separators=(',', ': '))
-        return HttpResponse(response, content_type="application/json")
-
-    def check_response(self, response):
-        if response:
-            return self.send_response(response)
-        self.code = 400
-        return self.error()
+        return HttpResponse(
+            response,
+            content_type="application/json")
 
     def get_collection(self, query):
         response = [
@@ -42,10 +39,14 @@ class JSONResponseMixin(ListView, APIView):
     def get(self, request, *args, **kwargs):
         rotate_token(request)
         query = self.get_query(request, *args, **kwargs)
-        if not query:
+        if not isinstance(query, QuerySet):
             return self.error()
+        # The Queryset is empty
+        # if not query.exists():
+        #     self.code = 204
+            # Enhancement return this code and no data...
         response = self.get_collection(query)
-        return self.check_response(response)
+        return self.send_response(response)
 
     def post(self, request):
         response = self.get_post(request.data)
@@ -60,6 +61,7 @@ class JSONResponseMixin(ListView, APIView):
     """
     Dont forget that @get_query method must return a QuerySet Object
     """
+
     def get_query(self, request=None, *args, **kwargs):
         return self.get_queryset()
 
@@ -100,16 +102,16 @@ class JWTResponseMixin(JSONResponseMixin):
 
     def get(self, request=None, *args, **kwargs):
         query = self.get_query(request, *args, **kwargs)
-        if not query:
+        if not isinstance(query, QuerySet):
             return self.error()
         response = self.get_collection(query)
         response_json = {'status': 200, 'data': response}
         encoded = self.jwt_encoder(response_json)
-        return self.check_response(encoded)
+        return self.send_response(encoded)
 
     def post(self, request):
         response = self.get_post(request.data)
         encoded = None
         if response:
             encoded = self.jwt_encoder(response)
-        return self.check_response(encoded)
+        return self.send_response(encoded)
