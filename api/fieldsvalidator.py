@@ -121,6 +121,19 @@ class FieldsValidator():
     @staticmethod
     def validation_field(field, value_field, model):
 
+        """
+            Si el campo temrina en un operador se
+            lo trunca
+        """
+        field_splited = field.split("__")
+        operador = field_splited[len(field_splited) - 1]
+        if operador == 'gte' or \
+           operador == 'lte' or \
+           operador == 'gt' or \
+           operador == 'lt' or \
+           operador == 'icontains':
+            field = field.rsplit("__", 1)[0]
+
         try:
             # Busca el campo a validar dentro del modelo principal
             field_model = model._meta.get_field(field)
