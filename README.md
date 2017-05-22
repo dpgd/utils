@@ -15,6 +15,7 @@
 
 ### Update
 * git submodule update
+* git pull
 
 ## API
 
