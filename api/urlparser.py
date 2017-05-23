@@ -74,11 +74,12 @@ class URLParser(object):
             '>=': '__gte',
             '<=': '__lte',
             '<': '__lt',
-            '>': '__gt'
+            '>': '__gt',
+            '=*': '__icontains'
         }
         query_data = {}
         for fil in filters:
-            reg = re.search('([a-zA-Z-_\.]+)(>=|<=|=|<|>)(.+)', fil)
+            reg = re.search('([a-zA-Z-_\.]+)(=\*|>=|<=|=|<|>)(.+)', fil)
             field, oper, value = reg.groups()
             if field in model_fields.keys():
                 obj_filter["filters_exist"].append(field)
