@@ -29,13 +29,21 @@ class Api():
 
         with_slash = path if path.endswith('/') else path + '/'
 
-        return call(self.__url + with_slash, **params)
+        result = call(self.__url + with_slash, **params)
+
+        if result.status_code == '401':
+            print 'Unauthorized'
+
+        return result
+
+    def __re_login(self):
+        pass
 
     def get(self, path='', data=None, **kwargs):
-        return self.__call(path, 'GET', data)
+        return self.__call(path, 'GET', data, **kwargs)
 
     def post(self, path='', data=None, **kwargs):
-        return self.__call(path, 'POST', data)
+        return self.__call(path, 'POST', data, **kwargs)
 
     def put(self, path='', data=None, **kwargs):
-        return self.__call(path, 'PUT', data)
+        return self.__call(path, 'PUT', data, **kwargs)
