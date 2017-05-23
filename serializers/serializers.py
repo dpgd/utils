@@ -113,3 +113,4 @@ class JWTResponseMixin(JSONResponseMixin):
         if response:
             encoded = self.jwt_encoder(response)
         return self.check_response(encoded)
+

@@ -8,6 +8,9 @@ class AuthMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
+        if request.method == 'OPTIONS':
+            return self.get_response(request)
+
         if 'HTTP_AUTHORIZATION' not in request.META:
             return HttpResponse('Unauthorized', status=401)
 
