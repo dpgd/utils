@@ -18,7 +18,7 @@ class AuthMiddleware(object):
 
         auth_api = Api(settings.CENTRAL_AUTH_API_URL)
         result = auth_api.get(
-            'api/auth/',
+            settings.CENTRAL_AUTH_API_AUTH,
             headers={
                 'Authorization': jwt_token
             })
