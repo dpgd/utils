@@ -38,6 +38,7 @@ class JSONResponseMixin(ListView, APIView):
         return response
 
     def get(self, request, *args, **kwargs):
+        # CSRF
         rotate_token(request)
         query = self.get_query(request, *args, **kwargs)
         if not isinstance(query, QuerySet):

@@ -44,7 +44,7 @@ class FieldsValidator():
         try:
             val = int(value_field)
             if val < (-1 * (sys.maxsize - 1)) or val > sys.maxsize:
-                obj['message'] = "El campo " + field.name + " esta fuera de rango ["+(-1 * (sys.maxsize - 1))+":"+str(sys.maxsize)+"]"
+                obj['message'] = "El campo " + field.name + " esta fuera de rango [" + (-1 * (sys.maxsize - 1)) + ":" + str(sys.maxsize) + "]"
                 obj['code'] = COD_ERROR['invalid_value']
         except ValueError:
             obj['message'] = "El campo " + field.name + " debe ser entero"
@@ -151,11 +151,14 @@ class FieldsValidator():
 
         field_filter_type = field_model.get_internal_type()
 
-        if not field_model.blank and value_field.strip() in [None, 'null', '']:
+        if not field_model.blank and str(value_field).strip() in ['None', 'null', '']:
             return {
                 'code': COD_ERROR['blank_value'],
-                'message': u'El campo %s no puede ser vacío' % str(field_model)
+                'message': u'El campo %s no puede ser vacío.' % field
             }
+
+        if field_model.blank and str(value_field).strip() in ['None', 'null', '']:
+            return []
 
         validators = {
             'AutoField': FieldsValidator.validate_autofield,
