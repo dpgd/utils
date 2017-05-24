@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 import sys
 
 
-COD_ERROR = {'invalid_value': 0001}
+COD_ERROR = {
+    'blank_value': 0001,
+    'invalid_value': 0002
+}
 
 
 class FieldsValidator():
@@ -147,36 +151,26 @@ class FieldsValidator():
 
         field_filter_type = field_model.get_internal_type()
 
-        obj = {}
+        if not field_model.blank and value_field.strip() in [None, 'null', '']:
+            return {
+                'code': COD_ERROR['blank_value'],
+                'message': u'El campo %s no puede ser vacío' % str(field_model)
+            }
 
-        if field_filter_type == 'AutoField':
-            obj = FieldsValidator.validate_autofield(field_model, value_field)
+        validators = {
+            'AutoField': FieldsValidator.validate_autofield,
+            'BigAutoField': FieldsValidator.validate_bigautofield,
+            'IntegerField': FieldsValidator.validate_integerfield,
+            'PositiveIntegerField':
+                FieldsValidator.validate_positiveintegerfield,
+            'BigIntegerField': FieldsValidator.validate_bigintegerfield,
+            'CharField': FieldsValidator.validate_charfield,
+            'TextField': FieldsValidator.validate_textfield,
+            'DateTimeField': FieldsValidator.validate_datetimefield,
+            'BooleanField': FieldsValidator.validate_booleanfield
+        }
 
-        elif field_filter_type == 'BigAutoField':
-            obj = FieldsValidator.validate_bigautofield(field_model, value_field)
-
-        elif field_filter_type == 'IntegerField':
-            obj = FieldsValidator.validate_integerfield(field_model, value_field)
-
-        elif field_filter_type == 'PositiveIntegerField':
-            obj = FieldsValidator.validate_positiveintegerfield(field_model, value_field)
-
-        elif field_filter_type == 'BigIntegerField':
-            obj = FieldsValidator.validate_bigintegerfield(field_model, value_field)
-
-        elif field_filter_type == 'CharField':
-            obj = FieldsValidator.validate_charfield(field_model, value_field)
-
-        elif field_filter_type == 'TextField':
-            obj = FieldsValidator.validate_textfield(field_model, value_field)
-
-        elif field_filter_type == 'DateTimeField':
-            obj = FieldsValidator.validate_datetimefield(field_model, value_field)
-
-        elif field_filter_type == 'BooleanField':
-            obj = FieldsValidator.validate_booleanfield(field_model, value_field)
-
-        # TypeField faltantes de validacion:
+        return validators[field_filter_type](field_model, value_field)
 
         # BinaryField
         # CommaSeparatedIntegerField
@@ -197,8 +191,6 @@ class FieldsValidator():
         # URLField
         # UUIDField
 
-        return obj
-
     @staticmethod
     def validation_parameter(query_data, model):
 
@@ -211,6 +203,7 @@ class FieldsValidator():
                 model)
 
             if len(obj):
+                obj['field'] = field_filter
                 error.append(obj)
 
         return error
