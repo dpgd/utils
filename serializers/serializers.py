@@ -52,6 +52,8 @@ class JSONResponseMixin(ListView, APIView):
 
     def post(self, request):
         response = self.get_post(request.data)
+        if not response:
+            return self.error()
         return self.send_response(response)
     """
             --- Hooks ---
