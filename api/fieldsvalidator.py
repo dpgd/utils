@@ -4,7 +4,8 @@ import sys
 
 COD_ERROR = {
     'blank_value': 0001,
-    'invalid_value': 0002
+    'invalid_value': 0002,
+    'internal_error': 0003
 }
 
 
