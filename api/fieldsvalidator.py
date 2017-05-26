@@ -102,13 +102,41 @@ class FieldsValidator():
     @staticmethod
     def validate_datetimefield(field, value_field):
         obj = {}
-        fechas_split = value_field.split('/')
-        if len(fechas_split) != 3:
-            obj['message'] = "El campo " + field.name + " debe tener el formato DD/MM/YYYY."
+        fecha_hora = value_field.split(' ')
+        if len(fecha_hora) != 2:
+            obj['message'] = "El campo " + field.name + " debe tener el formato MM/DD/YYYY hh:mm."
             obj['code'] = COD_ERROR['invalid_value']
         else:
-            if not fechas_split[0].isnumeric() or not fechas_split[1].isnumeric() or not fechas_split[2].isnumeric():
-                obj['message'] = "El campo " + field.name + " debe tener el formato DD/MM/YYYY."
+
+            fecha_split = fecha_hora[0].split('/')
+            hora_split = fecha_hora[1].split(':')
+            if len(fecha_split) != 3 or len(hora_split) != 2:
+                obj['message'] = "El campo " + field.name + " debe tener el formato MM/DD/YYYY hh:mm."
+                obj['code'] = COD_ERROR['invalid_value']
+            else:
+                if not fecha_split[0].isnumeric() or \
+                   not fecha_split[1].isnumeric() or \
+                   not fecha_split[2].isnumeric() or \
+                   not hora_split[0].isnumeric() or \
+                   not hora_split[1].isnumeric():
+                    obj['message'] = "El campo " + field.name + " debe tener el formato MM/DD/YYYY hh:mm."
+                    obj['code'] = COD_ERROR['invalid_value']
+
+        return obj
+
+    @staticmethod
+    def validate_datefield(field, value_field):
+        obj = {}
+
+        fecha_split = value_field.split('/')
+        if len(fecha_split) != 3:
+            obj['message'] = "El campo " + field.name + " debe tener el formato MM/DD/YYYY."
+            obj['code'] = COD_ERROR['invalid_value']
+        else:
+            if not fecha_split[0].isnumeric() or \
+               not fecha_split[1].isnumeric() or \
+               not fecha_split[2].isnumeric():
+                obj['message'] = "El campo " + field.name + " debe tener el formato MM/DD/YYYY."
                 obj['code'] = COD_ERROR['invalid_value']
 
         return obj
@@ -170,14 +198,15 @@ class FieldsValidator():
             'CharField': FieldsValidator.validate_charfield,
             'TextField': FieldsValidator.validate_textfield,
             'DateTimeField': FieldsValidator.validate_datetimefield,
+            'DateField': FieldsValidator.validate_datefield,
             'BooleanField': FieldsValidator.validate_booleanfield
         }
 
         return validators[field_filter_type](field_model, value_field)
 
+        # Tipo de datos faltantes de validar:
         # BinaryField
         # CommaSeparatedIntegerField
-        # DateField
         # DecimalField
         # DurationField
         # EmailField
