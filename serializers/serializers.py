@@ -50,7 +50,7 @@ class JSONResponseMixin(ListView, APIView):
 
     def post(self, request):
         response = self.get_post(request.data)
-        return self.check_response(response)
+        return self.send_response(response)
     """
             --- Hooks ---
     @get_query  >>> Filter the objects models and return a QuerySet Object
