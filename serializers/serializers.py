@@ -21,6 +21,7 @@ class JSONResponseMixin(ListView, APIView):
     message_error = 'El error no está definido'
     '''You can change this method in the model, as_json is the default one'''
     method_json = "as_json"
+    parameter_method_json = None
     code = None
 
     def send_response(self, response):
@@ -37,6 +38,7 @@ class JSONResponseMixin(ListView, APIView):
         return response
 
     def get(self, request, *args, **kwargs):
+        # CSRF
         rotate_token(request)
         query = self.get_query(request, *args, **kwargs)
         if not isinstance(query, QuerySet):
@@ -77,7 +79,7 @@ class JSONResponseMixin(ListView, APIView):
 
     def method_execute(self, obj):
         method = getattr(obj, self.method_json)
-        return method()
+        return method(self.parameter_method_json)
 
 
 class JWTResponseMixin(JSONResponseMixin):
