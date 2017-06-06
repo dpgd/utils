@@ -41,10 +41,10 @@ class TokenMiddleware(object):
         if request.method == 'OPTIONS':
             return self.get_response(request)
 
-        if 'Token' not in request.META:
+        if 'HTTP_TOKEN' not in request.META:
             return HttpResponse('Unauthorized', status=401)
 
-        token = request.META.get('Token', None)
+        token = request.META.get('HTTP_TOKEN', None)
 
         if token in settings.TOKENS:
             return self.get_response(request)
