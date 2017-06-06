@@ -27,3 +27,22 @@ class AuthMiddleware(object):
             return self.get_response(request)
 
         return HttpResponse(result.content, status=result.status_code)
+
+
+class TokenMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.method == 'OPTIONS':
+            return self.get_response(request)
+
+        if 'Token' not in request.META:
+            return HttpResponse('Unauthorized', status=401)
+
+        token = request.META.get('Token', None)
+
+        if token in settings.TOKENS:
+            return self.get_response(request)
+
+        return HttpResponse('Unauthorized', status=401)
