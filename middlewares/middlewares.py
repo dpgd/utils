@@ -1,4 +1,4 @@
-from utils.api.Api import Api
+from utils.api.api import Api
 from django.http import HttpResponse
 from django.conf import settings
 
@@ -34,6 +34,10 @@ class TokenMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
+        # If access from admin site pass...
+        if not request.path.startswith('/api/'):
+            return self.get_response(request)
+
         if request.method == 'OPTIONS':
             return self.get_response(request)
 
