@@ -1,4 +1,4 @@
-# Common libraries for TOP project
+# Common libraries for Django Projects
 
 
 ## Usage
@@ -7,7 +7,7 @@
 
 #### The first user on the team:
 * cd your-project-that-uses-utils-lib
-* git submodule add git@10.25.253.3:TOP/utils.git
+* git submodule add git@github.com:dpgd/utils.git
 
 #### Other team's members
 * cd your-project-that-uses-utils-lib
