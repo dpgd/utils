@@ -1,23 +1,19 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from django.views.generic import ListView
-from django.middleware.csrf import rotate_token
 from django.db.models.query import QuerySet
-from rest_framework.views import APIView
-from rest_framework.authentication import TokenAuthentication
 from django.conf import settings
 import json
 import jwt
 
 
-class JSONResponseMixin(ListView, APIView):
+class JSONResponseMixin(ListView):
     """Summary.
 
     A mixin that can be used to render a JSON response.
     It can return JSON data, from post and get requests
     """
 
-    authentication_classes = (TokenAuthentication,)
     message_error = 'El error no está definido'
     '''You can change this method in the model, as_json is the default one'''
     method_json = "as_json"
@@ -38,20 +34,14 @@ class JSONResponseMixin(ListView, APIView):
         return response
 
     def get(self, request, *args, **kwargs):
-        # CSRF
-        rotate_token(request)
         query = self.get_query(request, *args, **kwargs)
         if not isinstance(query, QuerySet):
             return self.error()
-        # The Queryset is empty
-        # if not query.exists():
-        #     self.code = 204
-            # Enhancement return this code and no data...
         response = self.get_collection(query)
         return self.send_response(response)
 
     def post(self, request):
-        response = self.get_post(request.data)
+        response = self.get_post(request, request.POST)
         if not response:
             return self.error()
         return self.send_response(response)
