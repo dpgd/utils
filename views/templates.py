@@ -6,6 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponse
 from django.http import JsonResponse
 import json
+import datetime
 
 
 # Template classes
@@ -100,6 +101,27 @@ class DeleteTemplateView(DeleteView):
         element = self.model.objects.all().filter(pk=pk)
         if element:
             element.delete()
+            return JsonResponse({'status': 'true', 'message': 200}, status=200)
+        else:
+            return JsonResponse({'status': 'false',
+                                'message': self.message_not_exists}, status=500
+                                )
+
+
+class DeleteLogicTemplateView(DeleteView):
+
+    def __init__(self, model, message_not_exists):
+        self.model = model
+        self.message_not_exists = message_not_exists
+
+    def get(self, request, *args, **kwargs):
+        pk = int(kwargs['pk'])
+        reason = kwargs['reason']
+        element = self.model.objects.all().filter(pk=pk)
+        if element:
+            element.update(eliminated=True,
+                           eliminated_reason=reason,
+                           eliminated_date=datetime.date.today())
             return JsonResponse({'status': 'true', 'message': 200}, status=200)
         else:
             return JsonResponse({'status': 'false',
