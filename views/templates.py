@@ -92,9 +92,8 @@ class UpdateTemplateView(UpdateView):
 
 class DeleteTemplateView(DeleteView):
 
-    def __init__(self, model, message_not_exists):
-        self.model = model
-        self.message_not_exists = message_not_exists
+    model = None
+    message_not_exists = None
 
     def get(self, request, *args, **kwargs):
         pk = int(kwargs['pk'])
